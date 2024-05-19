@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class UserGiftController extends Controller
+class GiftuserController extends Controller
 {
     public function index($id)
     {
