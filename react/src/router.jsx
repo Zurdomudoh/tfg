@@ -1,4 +1,6 @@
+import React from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
+import ProtectedRoute from '../src/components/ProtectedRoute.jsx';
 import Login from "./views/public/Login.jsx";
 import NotFound from "./views/public/NotFound.jsx";
 import AdminLayout from "./components/AdminLayout.jsx";
@@ -9,8 +11,10 @@ import Gifts from "./views/admin/Gifts.jsx";
 import GiftForm from "./views/admin/GiftForm.jsx";
 import UserGifts from "./views/user/UserGifts.jsx";
 import UserGiftForm from "./views/user/UserGiftForm.jsx";
-import Details from "./views/admin/Details.jsx"
+import Details from "./views/admin/Details.jsx";
 import UserDetails from "./views/user/UserDetails.jsx";
+import Unauthorized from "./views/public/Unauthorized.jsx";
+
 
 const router = createBrowserRouter([
   {
@@ -27,31 +31,31 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'users', // Ruta para la vista Users dentro de AdminLayout
-        element: <Users />
+        element: <ProtectedRoute element={<Users />} allowedRoles={['admin']} />
       },
       {
         path: 'users/new', // Ruta para la vista Users dentro de AdminLayout
-        element: <UserForm />
+        element: <ProtectedRoute element={<UserForm />} allowedRoles={['admin']} />
       },
       {
         path: 'users/:id',
-        element: <UserForm/>
+        element: <ProtectedRoute element={<UserForm />} allowedRoles={['admin']} />
       },
       {
         path: 'gifts', // Ruta para la vista Gifts dentro de AdminLayout
-        element: <Gifts />
+        element: <ProtectedRoute element={<Gifts />} allowedRoles={['admin']} />
       },
       {
         path: 'gifts/new', // Ruta para la vista Gifts dentro de AdminLayout
-        element: <GiftForm />
+        element: <ProtectedRoute element={<GiftForm />} allowedRoles={['admin']} />
       },
       {
         path: 'gifts/:id',
-        element: <GiftForm/>
+        element: <ProtectedRoute element={<GiftForm />} allowedRoles={['admin']} />
       },
       {
         path: 'gitfs/details/:id',
-        element: <Details/>
+        element: <ProtectedRoute element={<Details />} allowedRoles={['admin']} />
       },
     ]
   },
@@ -61,24 +65,28 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'gifts', // Ruta para la vista Gifts dentro de UserLayout
-        element: <UserGifts />
+        element: <ProtectedRoute element={<UserGifts />} allowedRoles={['user']} />
       },
       {
         path: 'gifts/new', // Ruta para la vista UserGiftForm dentro de UserLayout
-        element: <UserGiftForm />
+        element: <ProtectedRoute element={<UserGiftForm />} allowedRoles={['user']} />
       },
-      
       {
         path: 'gifts/:id', // Ruta para la vista Gifts dentro de UserLayout
-        element: <UserGiftForm/>
+        element: <ProtectedRoute element={<UserGiftForm />} allowedRoles={['user']} />
       },
       {
         path: 'gitfs/details/:id',
-        element: <UserDetails/>
+        element: <ProtectedRoute element={<UserDetails />} allowedRoles={['user']} />
       },
-      // Otras rutas para el rol de usuario...
+     
     ]
   },
+  {
+    path: "/unauthorized",
+    element: <Unauthorized/>
+  },
+
   {
     path: "*",
     element: <NotFound/>
