@@ -30,28 +30,29 @@ export default function UserDetails() {
   };
 
   return (
-    <div>
-      <h1>Gift {details?.name} Details</h1>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        details && (
-          <div className="card">
-            <div className="card-body">
-              <h5 className="card-title">{details.name}</h5>
-              <p className="card-text">Description: {details.description}</p>
-              {details.detail && (
-                <div>
-                  <h6 className="card-subtitle mb-2 text-muted">Imagen:</h6>
-                  <img src={details.detail.thumbnail} className="card-img-top" alt="Thumbnail" />
-                  <Link className="btn-edit" to ={'/user/gifts'}>Volver</Link>
-                </div>
-                
-              )}
-            </div>     
-          </div>
-        )
-      )}
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <div>
+        <h1>Gift {details?.name} Details</h1>
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          details && (
+            <div className="card">
+              <div className="card-body">
+                <h5 className="card-title">{details.name}</h5>
+                <p className="card-text">Description: {details.description}</p>
+                {details.detail && (
+                  <div>
+                    <h6 className="card-subtitle mb-2 text-muted">Imagen:</h6>
+                    <img src={details.detail.thumbnail} className="card-img-top" alt="Thumbnail" />
+                    <Link className="btn-edit" to ={'/user/gifts'}>Volver</Link>
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        )}
+      </div>
     </div>
   );
 }

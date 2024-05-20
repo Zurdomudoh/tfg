@@ -180,7 +180,7 @@ export default function GiftForm() {
                 ))}
               </select>
             </label>
-            <button className="btn">Save</button>
+            <button className="btn-edit">Save</button>
           </form>
         )}
       </div>
