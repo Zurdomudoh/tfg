@@ -54,7 +54,7 @@ const router = createBrowserRouter([
         element: <ProtectedRoute element={<GiftForm />} allowedRoles={['admin']} />
       },
       {
-        path: 'gitfs/details/:id',
+        path: 'gifts/details/:id',
         element: <ProtectedRoute element={<Details />} allowedRoles={['admin']} />
       },
     ]

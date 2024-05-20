@@ -28,7 +28,6 @@ class LoginRequest extends FormRequest
             'password' => [
                 'required',
             ],
-            'remember' => 'boolean'
         ];
     }
 }

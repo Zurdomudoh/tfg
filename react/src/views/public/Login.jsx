@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axiosClient from "../../axios-client.js";
 import { useStateContext } from "../../context/ContextProvider.jsx";
 
@@ -8,7 +7,6 @@ const Login = () => {
   const passwordRef = useRef(null);
   const { setUser, setToken } = useStateContext();
   const [message, setMessage] = useState(null);
-  const navigate = useNavigate();
 
   const onSubmit = (ev) => {
     ev.preventDefault();
@@ -18,24 +16,12 @@ const Login = () => {
       password: passwordRef.current.value,
     };
 
-    console.log("Payload:", payload);
-
     axiosClient
       .post('/login', payload)
       .then(({ data }) => {
-        console.log("User data:", data.user);
-        console.log("Token:", data.token);
         setUser(data.user);
         setToken(data.token);
-
         localStorage.setItem('USER', JSON.stringify(data.user));
-
-        // Redirige a la ruta adecuada después del inicio de sesión
-        if (data.user.role === "admin") {
-          navigate("/admin/users");
-        } else if (data.user.role === "user") {
-          navigate(`/user/gifts`);
-        }
       })
       .catch((err) => {
         console.error("Error:", err);
