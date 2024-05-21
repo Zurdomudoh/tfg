@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../../axios-client.js";
 import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Details() {
   const [details, setDetails] = useState(null);
@@ -53,6 +54,7 @@ export default function Details() {
           </div>
         )
       )}
+      <Link className="btn-edit" to ={'/admin/gifts' }>Volver</Link>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axiosClient from "../../axios-client.js";
 import { useStateContext } from "../../context/ContextProvider.jsx";
@@ -88,7 +88,7 @@ export default function GiftForm() {
               source: result.source,
               thumbnail: result.thumbnail
             }, isUpdate);
-          }, 5000); // Espera 5 segundos antes de guardar los detalles del regalo
+          }, 3700); // Espera 5 segundos antes de guardar los detalles del regalo
         })
         .catch(error => {
           console.error('Error fetching shopping data:', error);

@@ -5,7 +5,12 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        arsenal: ['Arsenal', 'sans-serif'],
+        mountains: ['Mountains of Christmas', 'cursive'],
+      },
+    },
   },
   plugins: [
     require('flowbite/plugin')
