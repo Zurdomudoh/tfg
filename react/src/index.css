@@ -44,59 +44,79 @@ input:focus {
 .btn,
 .btn-add,
 .btn-edit,
+.btn-detail,
 .btn-delete {
     font-family: "Roboto", sans-serif;
     outline: 0;
-    background: #5b08a7;
     border: 0;
     text-decoration: none;
-    padding: 15px;
     color: #FFFFFF;
     font-size: 16px;
-    -webkit-transition: all 0.3 ease;
-    transition: all 0.3 ease;
+    transition: all 0.3s ease;
     cursor: pointer;
     margin-inline: 5px;
-
-
-   
-}
-
-.btn-block {
-    width: 100%;
-}
-
-.btn-add,
-.btn-edit,
-.btn-delete{
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 1.5;
     padding: 0.5rem 0.75rem;
     font-size: 14px;
     border-radius: 4px;
+    width: 80px; /* Ajusta el ancho según tus necesidades */
+    height: 40px; /* Ajusta la altura según tus necesidades */
 }
+
 .btn-add {
     background-color: #00a762;
+    width: 145px;
+    height: 40px;
+    font-size: 1.125rem;
 }
+
+.btn-add:hover {
+    background-color: #007a52;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-edit {
+    background-color: #5b08a7;
+}
+
+.btn-edit:hover {
+    background-color: #4a067f;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-detail {
+    background-color: cornflowerblue;
+}
+
+.btn-detail:hover {
+    background-color: rgb(40, 106, 228);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 .btn-delete {
     background-color: #b72424;
 }
 
-.btn-logout {
-    text-decoration: none;
-    padding: 0.75rem 1.5rem;
-    color: #212121;
-    transition: all 0.3s;
-    border-radius: 6px;
-}
-.btn-logout:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+.btn-delete:hover {
+    background-color: #8f1c1c;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .btn:hover,
 .btn:active,
 .btn:focus {
-    background: #5b08a7;
+    outline: none;
+    transform: translateY(-3px);
 }
-
 .text-center {
     text-align: center;
 }

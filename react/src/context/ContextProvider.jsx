@@ -44,7 +44,7 @@ export const ContextProvider = ({ children }) => {
         router.navigate("/user/gifts");
       }
       setIsLoading(false);
-    }, 1000); // Tiempo simulado de carga
+    }, 500); // Tiempo simulado de carga
   }, [user]);
 
   return (

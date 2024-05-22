@@ -3,6 +3,7 @@ import axiosClient from "../../axios-client.js";
 import { Link } from "react-router-dom";
 import { useStateContext } from "../../context/ContextProvider.jsx";
 
+
 const ITEMS_PER_PAGE = 10;
 
 export default function Users() {
@@ -62,27 +63,27 @@ export default function Users() {
   const currentUsers = users.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
-    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-      <div className="flex justify-between items-center mb-3 mt-3 ml-3 mr-3">
+<div className="relative overflow-x-auto shadow-md sm:rounded-lg text-slate-200 text-lg bg-slate-600">
+      <div className="flex justify-between items-center m-3">
         <h1>Lista de Usuarios registrados</h1>
-        <Link className="btn-add" to="/admin/users/new">Añadir nuevo</Link>
+        <Link className="btn-add" to="/admin/users/new">Añadir Usuario</Link>
       </div>
-      <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <table className="w-full text-sm text-left rtl:text-right">
+        <thead className="text-lg uppercase text-slate-600">
           <tr>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 bg-slate-300">
               ID
             </th>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 bg-slate-300">
               Nombre
             </th>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 bg-slate-300">
               Correo Electrónico
             </th>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 bg-slate-300">
               Rol
             </th>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 bg-slate-300">
               Acciones
             </th>
           </tr>
@@ -100,7 +101,7 @@ export default function Users() {
             {currentUsers.map((user, index) => (
               <tr
                 key={user.id}
-                className={`border-b dark:border-gray-700 ${index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-100 dark:bg-gray-800'}`}
+                className={`text-base text-slate-800 ${index % 2 === 0 ? 'bg-slate-200 dark:bg-gray-600' : 'bg-slate-300 dark:bg-gray-800'}`}
               >
                 <td className="px-6 py-4">{user.id}</td>
                 <td className="px-6 py-4">{user.name}</td>
@@ -117,24 +118,24 @@ export default function Users() {
       </table>
       {!loading && (
         <div className="flex justify-center items-center mt-4 space-x-4">
-          <button
-            className="px-4 py-2 mb-3 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-          >
-            Anterior
-          </button>
-          <span className="text-gray-700 mb-2">
-            Página {currentPage} de {totalPages}
-          </span>
-          <button
-            className="px-4 py-2 mb-3 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-          >
-            Siguiente
-          </button>
-        </div>
+        <button
+          className="px-4 py-2 mb-3 bg-slate-300 text-gray-700 rounded transition-transform duration-300 transform hover:-translate-y-1 hover:shadow-md"
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          Anterior
+        </button>
+        <span className="text-slate-100 mb-2">
+          Página {currentPage} de {totalPages}
+        </span>
+        <button
+          className="px-4 py-2 mb-3 bg-slate-300 text-gray-700 rounded transition-transform duration-300 transform hover:-translate-y-1 hover:shadow-md"
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+        >
+          Siguiente
+        </button>
+      </div>
       )}
     </div>
   );

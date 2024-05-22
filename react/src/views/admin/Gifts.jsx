@@ -76,27 +76,27 @@ export default function Gifts() {
   const currentGifts = gifts.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
-    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-      <div className="flex justify-between items-center mb-3">
+    <div className="relative overflow-x-auto shadow-md sm:rounded-lg text-slate-200 text-lg bg-slate-600">
+      <div className="flex justify-between items-center m-3">
       <h1>Lista de Regalos</h1>
-      <Link className="btn-add" to="/admin/gifts/new">Add new</Link>
+      <Link className="btn-add" to="/admin/gifts/new">Añadir Regalo</Link>
     </div>
-      <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <table className="w-full text-sm text-left rtl:text-right">
+        <thead className="text-lg uppercase text-slate-600">
           <tr>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 bg-slate-300">
               Regalo
             </th>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 bg-slate-300">
               Descripción
             </th>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 bg-slate-300">
               Estado
             </th>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 bg-slate-300">
               Remitente
             </th>
-            <th scope="col" className="px-6 py-3">
+            <th scope="col" className="px-6 py-3 bg-slate-300">
               Opciones
             </th>
           </tr>
@@ -114,14 +114,8 @@ export default function Gifts() {
             {currentGifts.map((gift, index) => (
               <tr
                 key={gift.id}
-                className={`border-b dark:border-gray-700 ${index % 2 === 0 ? 'bg-white dark:bg-gray-900' : 'bg-gray-100 dark:bg-gray-800'}`}
-              >
-                <th
-                  scope="row"
-                  className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                >
-                  {gift.name}
-                </th>
+                className={`text-base text-slate-800 ${index % 2 === 0 ? 'bg-slate-200 dark:bg-gray-600' : 'bg-slate-300 dark:bg-gray-800'}`}>
+                <td className="px-6 py-4">{gift.name}</td>
                 <td className="px-6 py-4">{gift.description}</td>
                 <td className="px-6 py-4">{getStatusLabel(gift.status)}</td>
                 <td className="px-6 py-4">
@@ -129,7 +123,7 @@ export default function Gifts() {
                 </td>
                 <td className="px-6 py-4">
                   <Link className="btn-edit" to={'/admin/gifts/' + gift.id}>Editar</Link>                  
-                  <Link className="btn-add" to ={'/admin/gifts/details/' +gift.id}>Detalles</Link>
+                  <Link className="btn-detail" to ={'/admin/gifts/details/' +gift.id}>Detalles</Link>
                   <Link className="btn-delete" to="#" onClick={() => onDeleteClick(gift.id)}>Borrar</Link>
                 </td>
               </tr>
@@ -140,21 +134,21 @@ export default function Gifts() {
       {!loading && (
         <div className="flex justify-center items-center mt-4 space-x-4">
           <button
-            className="px-4 py-2 mb-3 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+            className="px-4 py-2 mb-3 bg-slate-300 text-gray-700 rounded transition-transform duration-300 transform hover:-translate-y-1 hover:shadow-md"
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
           >
-            Previous
+           Anterior
           </button>
-          <span className="text-gray-700 mb-2">
+          <span className="text-slate-100 mb-2">
             Página {currentPage} de {totalPages}
           </span>
           <button
-            className="px-4 py-2 mb-3 bg-gray-300 text-gray-700 rounded disabled:opacity-50"
+            className="px-4 py-2 mb-3 bg-slate-300 text-gray-700 rounded transition-transform duration-300 transform hover:-translate-y-1 hover:shadow-md"
             onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
           >
-            Next
+            Siguiente
           </button>
         </div>
       )}
