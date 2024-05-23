@@ -1,9 +1,9 @@
-import { useNavigate, useParams, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axiosClient from "../../axios-client.js";
+import { useNavigate, useParams } from "react-router-dom"; // Corrige la importación
 import { useStateContext } from "../../context/ContextProvider.jsx";
 
-export default function GiftForm() {
+export default function GiftForm({ gift: initialGift, closeModal }) {
   const navigate = useNavigate();
   const { id } = useParams();
   const [gift, setGift] = useState({
@@ -32,22 +32,14 @@ export default function GiftForm() {
   }, []);
 
   useEffect(() => {
-    if (id) {
-      setLoading(true);
-      axiosClient.get(`/gifts/${id}`)
-        .then(({ data }) => {
-          setLoading(false);
-          setGift(data);
-          const selectedUser = users.find(user => user.id === data.assigned_user_id);
-          if (selectedUser) {
-            setSelectedUserName(selectedUser.name);
-          }
-        })
-        .catch(() => {
-          setLoading(false);
-        });
+    if (initialGift) {
+      setGift(initialGift);
+      const selectedUser = users.find(user => user.id === initialGift.assigned_user_id);
+      if (selectedUser) {
+        setSelectedUserName(selectedUser.name);
+      }
     }
-  }, [id, users]);
+  }, [initialGift, users]);
 
   const saveGiftDetails = (detailsData, isUpdate = false) => {
     const request = isUpdate 
@@ -77,7 +69,6 @@ export default function GiftForm() {
       fetchShoppingResults(query)
         .then(shoppingData => {
           const result = shoppingData.shopping_results[0];
-          console.log('Shopping data:', result);
           setTimeout(() => {
             saveGiftDetails({
               id: giftId, // This should match the detail ID if updating
@@ -91,16 +82,16 @@ export default function GiftForm() {
           }, 3700); // Espera 5 segundos antes de guardar los detalles del regalo
         })
         .catch(error => {
-          console.error('Error fetching shopping data:', error);
+          console.error('Ha ocurrido un error introduciendo datos de compra', error);
         });
     };
 
     if (gift.id) {
       axiosClient.put(`/gifts/${gift.id}`, formData)
         .then(() => {
-          setNotification('Gift was successfully updated');
+          setNotification('Regalo modificado satisfactoriamente');
           fetchAndSaveGiftDetails(gift.id, true); // Pass true to indicate an update
-          navigate('/admin/gifts');
+          closeModal();
         })
         .catch(err => {
           const response = err.response;
@@ -111,9 +102,9 @@ export default function GiftForm() {
     } else {
       axiosClient.post('/gifts', formData)
         .then(response => {
-          setNotification('Gift was successfully created');
+          setNotification('El regalo se ha creado satisfactoriamente');
           fetchAndSaveGiftDetails(response.data.gift.id, false); // Pass false to indicate a new record
-          navigate('/admin/gifts');
+          closeModal();
         })
         .catch(err => {
           const response = err.response;
@@ -128,7 +119,6 @@ export default function GiftForm() {
     try {
       const response = await fetch(`http://localhost:3001/api/shopping?q=${query}`);
       const data = await response.json();
-      console.log('Shopping results:', data);
       return data;
     } catch (error) {
       console.error('Error fetching shopping results:', error);
@@ -138,52 +128,105 @@ export default function GiftForm() {
 
   return (
     <>
-      {gift.id && <h1>Update Gift: {gift.name}</h1>}
-      {!gift.id && <h1>New Gift</h1>}
+      {gift.id && <h1 className="text-lg mb-4">Editar regalo: {gift.name} </h1>}
+      {!gift.id && <h1 className="text-lg mb-4">Nuevo Regalo: </h1>}
       <div className="card animated fadeInDown">
-        {loading && (
-          <div className="text-center">
-            Loading...
-          </div>
-        )}
+        {loading && <div className="text-center">Loading...</div>}
         {errors && (
-          <div className="alert">
-            {Object.keys(errors).map(key => (
+          <div className="alert bg-red-100 text-red-700 p-4 rounded mb-4">
+            {Object.keys(errors).map((key) => (
               <p key={key}>{errors[key][0]}</p>
             ))}
           </div>
         )}
         {!loading && (
-          <form onSubmit={onSubmit}>
-            <label>
-              <legend>Regalo</legend>
-              <input value={gift.name} onChange={ev => setGift({ ...gift, name: ev.target.value })} placeholder="Name" />
-            </label>
-            <label>
-              <legend>Descripción</legend>
-              <input value={gift.description} onChange={ev => setGift({ ...gift, description: ev.target.value })} placeholder="Description" />
-            </label>
-            <label>
-              <legend>Estado</legend>
-              <select value={gift.status} onChange={ev => setGift({ ...gift, status: parseInt(ev.target.value) })}>
+          <form onSubmit={onSubmit} className="space-y-4">
+            <div>
+              <label
+                className="block mb-2 text-sm font-medium text-gray-700"
+                htmlFor="name"
+              >
+                Regalo
+              </label>
+              <input
+                id="name"
+                className="w-full p-2 border border-gray-300 rounded"
+                value={gift.name}
+                onChange={(ev) => setGift({ ...gift, name: ev.target.value })}
+                placeholder="Regalo"
+              />
+            </div>
+            <div>
+              <label
+                className="block mb-2 text-sm font-medium text-gray-700"
+                htmlFor="description"
+              >
+                Descripción
+              </label>
+              <input
+                id="description"
+                className="w-full p-2 border border-gray-300 rounded"
+                value={gift.description}
+                onChange={(ev) => setGift({ ...gift, description: ev.target.value })}
+                placeholder="Descripción"
+              />
+            </div>
+            <div>
+              <label
+                className="block mb-2 text-sm font-medium text-gray-700"
+                htmlFor="status"
+              >
+                Estado
+              </label>
+              <select
+                id="status"
+                className="w-full p-2 border border-gray-300 rounded"
+                value={gift.status}
+                onChange={(ev) => setGift({ ...gift, status: parseInt(ev.target.value) })}
+              >
                 <option value={0}>Pendiente</option>
                 <option value={1}>Comprado</option>
                 <option value={2}>Envuelto</option>
               </select>
-            </label>
-            <label>
-              <legend>Usuario</legend>
-              <select value={gift.assigned_user_id || ''} onChange={ev => setGift({ ...gift, assigned_user_id: ev.target.value })}>
+            </div>
+            <div>
+              <label
+                className="block mb-2 text-sm font-medium text-gray-700"
+                htmlFor="assigned_user_id"
+              >
+                Usuario
+              </label>
+              <select
+                id="assigned_user_id"
+                className="w-full p-2 border border-gray-300 rounded"
+                value={gift.assigned_user_id || ''}
+                onChange={(ev) => setGift({ ...gift, assigned_user_id: ev.target.value })}
+              >
                 <option value="">Seleccionar Usuario</option>
                 {users.map(user => (
                   <option key={user.id} value={user.id}>{user.name}</option>
                 ))}
               </select>
-            </label>
-            <button className="btn-edit">Save</button>
+            </div>
+            <div className="flex justify-end space-x-4">
+              <button
+                type="button"
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded"
+                onClick={closeModal}
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-500 text-white rounded"
+              >
+                Guardar
+              </button>
+            </div>
           </form>
         )}
       </div>
     </>
   );
+  
 }

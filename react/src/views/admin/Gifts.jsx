@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../../axios-client.js";
-import { Link } from "react-router-dom";
 import { useStateContext } from "../../context/ContextProvider.jsx";
+import GiftForm from "./GiftForm";
+import Modal from "react-modal";
+import { Link } from "react-router-dom";
+import Details from "./Details";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -9,38 +12,28 @@ export default function Gifts() {
   const [gifts, setGifts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const { user, setNotification } = useStateContext();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false); // Estado para controlar la apertura/cierre del modal de detalles
+  const [selectedGift, setSelectedGift] = useState(null);
+  const { setNotification } = useStateContext();
 
   useEffect(() => {
-    // Obtener la información del usuario cuando se carga el componente
-    getUserInfo();
+    getGifts();
   }, []);
 
-  const getUserInfo = () => {
-    axiosClient.get('/user')
-      .then(({ data }) => {
-        // Actualizar el contexto con la información del usuario
-        setNotification('Gifts information loaded successfully');
-        getGifts(data.id); // Pasar el ID del usuario para filtrar los regalos
-      })
-      .catch((error) => {
-        // Manejar errores aquí si es necesario
-        console.error('Error fetching user information:', error);
-      });
-  };
 
   const onDeleteClick = (giftId) => {
-    if (!window.confirm("Are you sure you want to delete this gift?")) {
+    if (!window.confirm("¿Quieres eliminar el regalo definitivamente?")) {
       return;
     }
     axiosClient
       .delete(`/gifts/${giftId}`)
       .then(() => {
-        setNotification('Gift was successfully deleted');
-        getGifts(user.id); // Pasar el ID del usuario para refrescar los regalos
+        setNotification('El regalo se ha eliminado');
+        getGifts(); // Refrescar la lista de regalos después de eliminar uno
       })
       .catch((error) => {
-        console.error('Error deleting gift:', error);
+        console.error('Ha ocurrido un error:', error);
       });
   };
 
@@ -50,14 +43,12 @@ export default function Gifts() {
       .get(`/gifts?userId=${userId}`) // Agregar parámetro de consulta para filtrar por usuario
       .then(({ data }) => {
         setLoading(false);
-        console.log(data)
         setGifts(data.gifts);
       })
       .catch(() => {
         setLoading(false);
       });
   };
-
   const getStatusLabel = (status) => {
     switch (status) {
       case 0:
@@ -70,43 +61,52 @@ export default function Gifts() {
         return "Desconocido";
     }
   };
-
   // Paginación
   const totalPages = Math.ceil(gifts.length / ITEMS_PER_PAGE);
   const currentGifts = gifts.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
+  const openModal = (gift = null) => {
+    setSelectedGift(gift);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedGift(null);
+    getGifts(); // Refrescar la lista de regalos después de cerrar el modal
+  };
+
+  const openDetailsModal = (gift = null) => {
+    setSelectedGift(gift);
+    setIsDetailsModalOpen(true); // Establecer el estado del modal de detalles como abierto
+  };
+  
+  // Función para cerrar el modal de detalles
+  const closeDetailsModal = () => {
+    setIsDetailsModalOpen(false); // Establecer el estado del modal de detalles como cerrado
+  };
+
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg text-slate-200 text-lg bg-slate-600">
       <div className="flex justify-between items-center m-3">
-      <h1>Lista de Regalos</h1>
-      <Link className="btn-add" to="/admin/gifts/new">Añadir Regalo</Link>
-    </div>
+        <h1>Lista de Regalos</h1>
+        <button className="btn-add" onClick={() => openModal()}>Añadir Regalo</button>
+      </div>
       <table className="w-full text-sm text-left rtl:text-right">
         <thead className="text-lg uppercase text-slate-600">
           <tr>
-            <th scope="col" className="px-6 py-3 bg-slate-300">
-              Regalo
-            </th>
-            <th scope="col" className="px-6 py-3 bg-slate-300">
-              Descripción
-            </th>
-            <th scope="col" className="px-6 py-3 bg-slate-300">
-              Estado
-            </th>
-            <th scope="col" className="px-6 py-3 bg-slate-300">
-              Remitente
-            </th>
-            <th scope="col" className="px-6 py-3 bg-slate-300">
-              Opciones
-            </th>
+            <th scope="col" className="px-6 py-3 bg-slate-300">ID</th>
+            <th scope="col" className="px-6 py-3 bg-slate-300">Nombre</th>
+            <th scope="col" className="px-6 py-3 bg-slate-300">Descripción</th>
+            <th scope="col" className="px-6 py-3 bg-slate-300">Estado</th>
+            <th scope="col" className="px-6 py-3 bg-slate-300">Usuario</th>
+            <th scope="col" className="px-6 py-3 bg-slate-300">Acciones</th>
           </tr>
         </thead>
         {loading ? (
           <tbody>
             <tr>
-              <td colSpan="6" className="text-center">
-                Loading...
-              </td>
+              <td colSpan="6" className="text-center">Loading...</td>
             </tr>
           </tbody>
         ) : (
@@ -114,7 +114,9 @@ export default function Gifts() {
             {currentGifts.map((gift, index) => (
               <tr
                 key={gift.id}
-                className={`text-base text-slate-800 ${index % 2 === 0 ? 'bg-slate-200 dark:bg-gray-600' : 'bg-slate-300 dark:bg-gray-800'}`}>
+                className={`text-base text-slate-800 ${index % 2 === 0 ? 'bg-slate-200 dark:bg-gray-600' : 'bg-slate-300 dark:bg-gray-800'}`}
+              >
+                <td className="px-6 py-4">{gift.id}</td>
                 <td className="px-6 py-4">{gift.name}</td>
                 <td className="px-6 py-4">{gift.description}</td>
                 <td className="px-6 py-4">{getStatusLabel(gift.status)}</td>
@@ -122,9 +124,8 @@ export default function Gifts() {
                   {gift.gift_users.length > 0 && gift.gift_users[0].user.name}
                 </td>
                 <td className="px-6 py-4">
-                  <Link className="btn-edit" to={'/admin/gifts/' + gift.id}>Editar</Link>                  
-                  <Link className="btn-detail" to ={'/admin/gifts/details/' +gift.id}>Detalles</Link>
-                  <Link className="btn-delete" to="#" onClick={() => onDeleteClick(gift.id)}>Borrar</Link>
+                  <button className="btn-edit" onClick={() => openModal(gift)}>Editar</button>
+                  <button className="btn-detail" onClick={() => openDetailsModal(gift)}>Detalles</button> {/* Cambiado para abrir el modal de detalles */}                  <button className="btn-delete" onClick={() => onDeleteClick(gift.id)}>Borrar</button>
                 </td>
               </tr>
             ))}
@@ -138,7 +139,7 @@ export default function Gifts() {
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
           >
-           Anterior
+            Anterior
           </button>
           <span className="text-slate-100 mb-2">
             Página {currentPage} de {totalPages}
@@ -152,6 +153,28 @@ export default function Gifts() {
           </button>
         </div>
       )}
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        contentLabel="Gift Form Modal"
+        className="fixed inset-0 flex items-center justify-center p-4 bg-gray-800 bg-opacity-50"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+      >
+        <div className="bg-white rounded-lg p-6 max-w-lg w-full">
+          <GiftForm gift={selectedGift} closeModal={closeModal} />
+        </div>
+      </Modal>
+      <Modal
+      isOpen={isDetailsModalOpen}
+      onRequestClose={closeDetailsModal}
+      contentLabel="Detalles del Regalo"
+      className="fixed inset-0 flex items-center justify-center p-4 bg-gray-800 bg-opacity-50"
+      overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+    >
+      <div className="bg-white rounded-lg p-6 max-w-lg w-full">
+        <Details gift={selectedGift} closeModal={closeDetailsModal} /> {/* Pasar el regalo seleccionado y la función para cerrar el modal al componente Details */}
+      </div>
+    </Modal>
     </div>
   );
 }

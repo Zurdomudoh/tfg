@@ -4,6 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\Rule;
+
 
 class UpdateUserRequest extends FormRequest
 {
@@ -25,12 +27,10 @@ class UpdateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:55',
-            'email' => 'required|email|unique:users,email,'.$this->id,
-            'password' => [
-                'confirmed',
-                Password::min(8)
-            ]
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|unique:users,email,' . $this->user->id,
+            'password' => 'sometimes|string|min:6|confirmed',
+            'role' => ['sometimes', 'string', Rule::in(['admin', 'user'])], // Validar que el rol sea 'admin' o 'user'
         ];
     }
 }

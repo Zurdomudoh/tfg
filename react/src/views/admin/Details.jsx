@@ -1,25 +1,19 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../../axios-client.js";
-import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
 
-export default function Details() {
+export default function Details({ gift, closeModal }) {
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { id } = useParams();
 
   useEffect(() => {
-    // Llamar a la función para obtener los detalles del regalo cuando el componente se monte
     fetchDetails();
   }, []);
 
   const fetchDetails = () => {
     setLoading(true);
-    // Realizar la solicitud para obtener los detalles del regalo con el ID proporcionado
     axiosClient
-      .get(`/gifts/${id}`)
+      .get(`/gifts/${gift.id}`)
       .then((response) => {
-        console.log(response)
         setDetails(response.data);
         setLoading(false);
       })
@@ -30,31 +24,52 @@ export default function Details() {
   };
 
   return (
-    <div>
-      <h1>Gift {details?.name} Details</h1>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        details && (
-          <div className="card">
-            <div className="card-body">
-              <h5 className="card-title">{details.name}</h5>
-              <p className="card-text">Description: {details.description}</p>
-              {details.detail && (
-                <div>
-                  <h6 className="card-subtitle mb-2 text-muted">Additional Details:</h6>
-                  <p className="card-text">Link: <a href={details.detail.link}>{details.detail.link}</a></p>
-                  <p className="card-text">Price: {details.detail.price}</p>
-                  <p className="card-text">Delivery: {details.detail.delivery}</p>
-                  <p className="card-text">Source: {details.detail.source}</p>
-                  <img src={details.detail.thumbnail} className="card-img-top" alt="Thumbnail" />
+      <div className="bg-gray-900 bg-opacity-75 fixed inset-0 z-50 overflow-y-auto">
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="bg-white rounded-lg p-6 max-w-3xl w-full">
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              details && (
+                <div className="flex">
+                  <div className="w-1/2">
+                    <a href={details.detail.link} target="_blank" rel="noopener noreferrer">
+                      <img
+                        className="p-8 rounded-t-lg"
+                        src={details.detail.thumbnail}
+                        alt="product image"
+                      />
+                    </a>
+                  </div>
+                  <div className="w-1/2 flex flex-col justify-between px-5 pb-5">
+                    <div>
+                      <a href={details.detail.link} target="_blank" rel="noopener noreferrer">
+                        <h1 className="text-5xl font-semibold mt-10 tracking-tight text-gray-900 dark:text-white">
+                          {details.name}
+                        </h1>
+                      </a>
+                      <h2 className="text-2xl font-semibold mb-4 tracking-tight text-gray-900 dark:text-white">
+                        {details.description}
+                      </h2>
+                      <h2 className="text-2xl mb-4 tracking-tight text-gray-900 dark:text-white">
+                        Tienda: {details.detail.source}
+                      </h2>
+                      <h2 className="text-lg mb-4 tracking-tight text-gray-900 dark:text-white">
+                        Gastos de envío: {details.detail.delivery}
+                      </h2>
+                      <h1 className="text-5xl font-semibold mt-10 tracking-tight text-gray-900 dark:text-white">
+                        {details.detail.price} €
+                      </h1>
+                    </div>
+                    <div className="flex justify-end">
+                      <button className="btn-edit" onClick={closeModal}>Cerrar</button>
+                    </div>
+                  </div>
                 </div>
-              )}
-            </div>
+              )
+            )}
           </div>
-        )
-      )}
-      <Link className="btn-edit" to ={'/admin/gifts' }>Volver</Link>
-    </div>
+        </div>
+      </div>
   );
 }
