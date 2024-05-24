@@ -19,6 +19,7 @@ export default function GiftForm({ gift: initialGift, closeModal }) {
   const [loading, setLoading] = useState(false);
   const { setNotification } = useStateContext();
 
+  // Se ejecuta al cargar el componente para obtener la lista de usuarios
   useEffect(() => {
     setLoading(true);
     axiosClient.get('/users')
@@ -31,16 +32,18 @@ export default function GiftForm({ gift: initialGift, closeModal }) {
       });
   }, []);
 
+  // Se ejecuta al recibir el regalo inicial para establecer los datos del formulario
   useEffect(() => {
     if (initialGift) {
       setGift(initialGift);
-      const selectedUser = users.find(user => user.id === initialGift.assigned_user_id);
-      if (selectedUser) {
-        setSelectedUserName(selectedUser.name);
+      const selectedUserId = initialGift.gift_users[0]?.user_id; // Accede al user_id del primer elemento en gift_users, si existe
+      if (selectedUserId) {
+        setGift(prevGift => ({ ...prevGift, assigned_user_id: selectedUserId }));
       }
     }
-  }, [initialGift, users]);
+  }, [initialGift]);
 
+  // Función para guardar los detalles del regalo en el servidor
   const saveGiftDetails = (detailsData, isUpdate = false) => {
     const request = isUpdate 
       ? axiosClient.put(`/details/${detailsData.id}`, detailsData)
@@ -55,6 +58,7 @@ export default function GiftForm({ gift: initialGift, closeModal }) {
       });
   };
 
+  // Función que se ejecuta al enviar el formulario
   const onSubmit = ev => {
     ev.preventDefault();
     const formData = {
@@ -64,6 +68,7 @@ export default function GiftForm({ gift: initialGift, closeModal }) {
       user_id: gift.assigned_user_id
     };
 
+    // Función para obtener y guardar los detalles del regalo en el servidor
     const fetchAndSaveGiftDetails = (giftId, isUpdate = false) => {
       const query = formData.name + " " + formData.description;
       fetchShoppingResults(query)
@@ -86,6 +91,7 @@ export default function GiftForm({ gift: initialGift, closeModal }) {
         });
     };
 
+    // Lógica para editar o crear un regalo
     if (gift.id) {
       axiosClient.put(`/gifts/${gift.id}`, formData)
         .then(() => {
@@ -115,6 +121,7 @@ export default function GiftForm({ gift: initialGift, closeModal }) {
     }
   };
 
+  // Función para obtener resultados de compras desde el servidor
   const fetchShoppingResults = async (query) => {
     try {
       const response = await fetch(`http://localhost:3001/api/shopping?q=${query}`);
@@ -134,7 +141,8 @@ export default function GiftForm({ gift: initialGift, closeModal }) {
         {loading && <div className="text-center">Loading...</div>}
         {errors && (
           <div className="alert bg-red-100 text-red-700 p-4 rounded mb-4">
-            {Object.keys(errors).map((key) => (
+           
+           {Object.keys(errors).map((key) => (
               <p key={key}>{errors[key][0]}</p>
             ))}
           </div>
@@ -228,5 +236,4 @@ export default function GiftForm({ gift: initialGift, closeModal }) {
       </div>
     </>
   );
-  
 }
