@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../../axios-client.js";
 import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
 
-export default function UserDetails() {
+
+export default function UserDetails({gift, closeModal}) {
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
@@ -17,7 +17,7 @@ export default function UserDetails() {
     setLoading(true);
     // Realizar la solicitud para obtener los detalles del regalo con el ID proporcionado
     axiosClient
-      .get(`/gifts/${id}`)
+      .get(`/gifts/${gift.id}`)
       .then((response) => {
         console.log(response)
         setDetails(response.data);
@@ -45,7 +45,7 @@ export default function UserDetails() {
                   <div>
                     <h6 className="card-subtitle mb-2 text-muted">Imagen:</h6>
                     <img src={details.detail.thumbnail} className="card-img-top" alt="Thumbnail" />
-                    <Link className="btn-edit" to ={'/user/gifts'}>Volver</Link>
+                    <button className="btn-edit" onClick={closeModal}>Cerrar</button>
                   </div>
                 )}
               </div>

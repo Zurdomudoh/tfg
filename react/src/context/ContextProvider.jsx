@@ -66,3 +66,16 @@ export const ContextProvider = ({ children }) => {
 };
 
 export const useStateContext = () => useContext(StateContext);
+
+
+export const onLogout = (ev) => {
+  ev.preventDefault();
+
+  axiosClient.post("/logout").then(() => {
+    setUser({});
+    setToken(null);
+    localStorage.removeItem('USER');
+    localStorage.removeItem('ACCESS_TOKEN');
+    localStorage.clear();
+  });
+};

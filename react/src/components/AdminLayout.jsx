@@ -17,10 +17,9 @@ const AdminLayout = () => {
     axiosClient.post("/logout").then(() => {
       setUser({});
       setToken(null);
-
-      // Limpiar información del usuario del localStorage
       localStorage.removeItem('USER');
       localStorage.removeItem('ACCESS_TOKEN');
+      localStorage.clear();
     });
   };
 

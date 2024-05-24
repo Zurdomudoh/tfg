@@ -26,7 +26,7 @@ export default function Details({ gift, closeModal }) {
   return (
       <div className="bg-gray-900 bg-opacity-75 fixed inset-0 z-50 overflow-y-auto">
         <div className="flex justify-center items-center min-h-screen">
-          <div className="bg-white rounded-lg p-6 max-w-3xl w-full">
+          <div className="bg-gradient-to-r from-white from-50% to-slate-100 to-60% rounded-lg p-6 max-w-3xl w-full">
             {loading ? (
               <p>Loading...</p>
             ) : (

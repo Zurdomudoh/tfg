@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../../axios-client.js";
-import { Link } from "react-router-dom";
-import { useStateContext } from "../../context/ContextProvider.jsx";
+import Modal from "react-modal";
+import UserGiftForm from "./UserGiftForm.jsx";
+import UserDetails from "./UserDetails.jsx"
 
 export default function UserGifts() {
   const [gifts, setGifts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { user } = useStateContext();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false); // Estado para controlar la apertura/cierre del modal de detalles
+  const [selectedGift, setSelectedGift] = useState(null);
+
 
   useEffect(() => {
     console.log(localStorage); // Imprimir el contenido del localStorage
@@ -42,21 +46,43 @@ export default function UserGifts() {
       });
   };
 
+  const openModal = (gift = null) => {
+    setSelectedGift(gift);
+    console.log(gift)
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedGift(null);
+    getGifts(); // Refrescar la lista de regalos después de cerrar el modal
+  };
+
+  const openDetailsModal = (gift) => {
+    setSelectedGift(gift);
+    setIsDetailsModalOpen(true); // Establecer el estado del modal de detalles como abierto
+  };
+  
+  
+  // Función para cerrar el modal de detalles
+  const closeDetailsModal = () => {
+    setIsDetailsModalOpen(false); // Establecer el estado del modal de detalles como cerrado
+  };
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
         <h1>Lista de Regalos</h1>
-        <Link className="btn-add" to="/user/gifts/new">Add new</Link>
-
+        <button className="btn-add" onClick={() => openModal()}>Añadir Regalo</button>
       </div>
       <div className="card animated fadeInDown">
         <table>
-          <thead>
+          <thead className="">
             <tr>
               <th>ID</th>
               <th>Name</th>
               <th>Description</th>
-              <th>Actions</th>
+              <th className="flex justify-center">Actions</th>
             </tr>
           </thead>
           {loading ? (
@@ -74,13 +100,10 @@ export default function UserGifts() {
                   <td>{gift.id}</td>
                   <td>{gift.name}</td>
                   <td>{gift.description}</td>
-
                   <td>
-                  <Link className="btn-edit" to={`/user/gifts/${gift.id}`}>Edit</Link>
-                    &nbsp;
-                    <Link className="btn-add" to ={'/user/gitfs/details/' +gift.id}>Detalles</Link>
-                    &nbsp;
-                    <button className="btn-delete" onClick={() => onDeleteClick(gift.id)}>Delete</button>
+                    <button className="btn-edit" onClick={() => openModal(gift)}>Editar</button>
+                    <button className="btn-detail" onClick={() => openDetailsModal(gift)}>Detalles</button> {/* Cambiado para abrir el modal de detalles */}
+                    <button className="btn-delete" onClick={() => onDeleteClick(gift.id)}>Borrar</button>
                   </td>
                 </tr>
               ))}
@@ -88,6 +111,28 @@ export default function UserGifts() {
           )}
         </table>
       </div>
+      <Modal
+  isOpen={isModalOpen}
+  onRequestClose={closeModal}
+  contentLabel="Gift Form Modal"
+  className="fixed inset-0 flex items-center justify-center p-4 bg-gray-800 bg-opacity-50"
+  overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+>
+  <div className="bg-white rounded-lg p-6 max-w-lg w-full">
+    <UserGiftForm gift = {selectedGift} closeModal={closeModal} />
+  </div>
+</Modal>
+      <Modal
+      isOpen={isDetailsModalOpen}
+      onRequestClose={closeDetailsModal}
+      contentLabel="Detalles del Regalo"
+      className="fixed inset-0 flex items-center justify-center p-4 bg-gray-800 bg-opacity-50"
+      overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+    >
+      <div className="bg-white rounded-lg p-6 max-w-lg w-full">
+        <UserDetails gift={selectedGift} closeModal={closeDetailsModal} /> {/* Pasar el regalo seleccionado y la función para cerrar el modal al componente Details */}
+      </div>
+    </Modal>
     </div>
   );
 }

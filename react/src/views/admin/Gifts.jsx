@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import axiosClient from "../../axios-client.js";
 import { useStateContext } from "../../context/ContextProvider.jsx";
-import GiftForm from "./GiftForm";
 import Modal from "react-modal";
-import { Link } from "react-router-dom";
+import GiftForm from "./GiftForm";
 import Details from "./Details";
 
 const ITEMS_PER_PAGE = 10;
@@ -23,7 +22,7 @@ export default function Gifts() {
 
 
   const onDeleteClick = (giftId) => {
-    if (!window.confirm("¿Quieres eliminar el regalo definitivamente?")) {
+    if (!window.confirm("¿Quieres eliminar el regalo?")) {
       return;
     }
     axiosClient

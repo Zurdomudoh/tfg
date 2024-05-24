@@ -10,7 +10,7 @@ app.use(cors()); // Habilita CORS para todas las rutas
 app.get('/api/shopping', async (req, res) => {
   try {
     const query = req.query.q;
-    const apiKey = '40ca2c911b2bf7d276df3e8b3bd7bdd92df25a349d5d91d3ff9e319e249ee91f';
+    const apiKey = '630601098a35b70b6ac6dc9b802d0ed7394bd7a534da0a397ab17ea5acfa5245';
     const response = await axios.get(`https://serpapi.com/search.json`, {
       params: {
         engine: 'google_shopping',
