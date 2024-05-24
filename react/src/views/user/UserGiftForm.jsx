@@ -3,8 +3,17 @@ import { useState, useEffect } from "react";
 import axiosClient from "../../axios-client.js";
 import { useStateContext } from "../../context/ContextProvider.jsx";
 
+/**
+ * Componente para el formulario de regalos del usuario.
+ * Permite crear y editar regalos, así como gestionar la lógica de guardado y obtención de datos.
+ *
+ * @param {Object} props - Las propiedades del componente.
+ * @param {Object} props.gift - El regalo recibido (en caso de edición).
+ * @param {Function} props.closeModal - Función para cerrar el modal.
+ *
+ * @returns {React.Element} El formulario para crear o editar un regalo.
+ */
 export default function UserGiftForm({ gift: receivedGift, closeModal }) {
-  console.log('GIFT_RECIBIDO', receivedGift);
   const navigate = useNavigate();
   const { id } = useParams(); // Obtener el ID del regalo de los parámetros de la URL
   const [gift, setGift] = useState({
@@ -18,6 +27,7 @@ export default function UserGiftForm({ gift: receivedGift, closeModal }) {
   const [errors, setErrors] = useState(null);
   const { setNotification } = useStateContext();
 
+  // Efecto para obtener usuarios y establecer el ID del usuario actual
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('USER'));
     if (user && user.id) {
@@ -37,6 +47,7 @@ export default function UserGiftForm({ gift: receivedGift, closeModal }) {
       });
   }, []);
 
+  // Efecto para obtener los datos del regalo si se está editando (hay un ID en la URL)
   useEffect(() => {
     if (id) {
       setLoading(true);
@@ -51,6 +62,7 @@ export default function UserGiftForm({ gift: receivedGift, closeModal }) {
     }
   }, [id]);
 
+  // Efecto para actualizar el regalo recibido (en caso de edición)
   useEffect(() => {
     if (receivedGift) {
       setGift(prevGift => ({
@@ -61,6 +73,7 @@ export default function UserGiftForm({ gift: receivedGift, closeModal }) {
     }
   }, [receivedGift, users]);
 
+  // Función para guardar los detalles del regalo
   const saveGiftDetails = (detailsData, isUpdate = false) => {
     const request = isUpdate
       ? axiosClient.put(`/details/${detailsData.id}`, detailsData)
@@ -75,29 +88,30 @@ export default function UserGiftForm({ gift: receivedGift, closeModal }) {
       });
   };
 
+  // Función para obtener y guardar los detalles del regalo desde una API externa
   const fetchAndSaveGiftDetails = (giftId, isUpdate = false) => {
     const query = gift.name + " " + gift.description;
     fetchShoppingResults(query)
       .then(shoppingData => {
         const result = shoppingData.shopping_results[0];
         console.log('Shopping data:', result);
-        setTimeout(() => {
-          saveGiftDetails({
-            id: giftId, // This should match the detail ID if updating
-            gift_id: giftId,
-            link: result.link,
-            price: result.extracted_price,
-            delivery: result.delivery,
-            source: result.source,
-            thumbnail: result.thumbnail
-          }, isUpdate);
-        }, 5000); // Espera 5 segundos antes de guardar los detalles del regalo
+        saveGiftDetails({
+          id: giftId, // Este ID debe coincidir con el ID del detalle si se está actualizando
+          gift_id: giftId,
+          link: result.link,
+          price: result.extracted_price,
+          delivery: result.delivery,
+          source: result.source,
+          thumbnail: result.thumbnail
+        }, isUpdate);
+        setTimeout(closeModal, 3700); // Espera 3.7 segundos antes de cerrar el modal
       })
       .catch(error => {
         console.error('Error fetching shopping data:', error);
       });
   };
 
+  // Función para manejar el envío del formulario
   const onSubmit = (ev) => {
     ev.preventDefault();
     const formData = {
@@ -107,17 +121,14 @@ export default function UserGiftForm({ gift: receivedGift, closeModal }) {
       user_id: gift.user_id
     };
 
-    console.log('FormData:', formData); // Agregar el console.log para mostrar formData
-
     if (gift.id) {
       // Si es una edición, hacemos una solicitud PUT
       axiosClient.put(`/gifts/${gift.id}`, formData)
         .then(() => {
-          console.log('Request:', { method: 'PUT', url: `/gifts/${gift.id}`, data: formData }); // Log de la solicitud
           setNotification('Gift was successfully updated');
-          fetchAndSaveGiftDetails(gift.id, true); // Pass true to indicate an update
+          fetchAndSaveGiftDetails(gift.id, true); // Pasar true para indicar una actualización
           closeModal(); // Cerrar el modal después de guardar
-          navigate('/user/gifts');
+          setTimeout(() => navigate('/user/gifts'), 3700); // Navega a UserGifts después de 3.7 segundos
         })
         .catch(err => {
           const response = err.response;
@@ -129,11 +140,10 @@ export default function UserGiftForm({ gift: receivedGift, closeModal }) {
       // Si es un nuevo regalo, hacemos una solicitud POST
       axiosClient.post("/gifts", formData)
         .then(response => {
-          console.log('Request:', { method: 'POST', url: '/gifts', data: formData }); // Log de la solicitud
           setNotification('Gift was successfully created');
-          fetchAndSaveGiftDetails(response.data.gift.id, false); // Pass false to indicate a new record
+          fetchAndSaveGiftDetails(response.data.gift.id, false); // Pasar false para indicar un nuevo registro
           closeModal(); // Cerrar el modal después de guardar
-          navigate('/user/gifts');
+          setTimeout(() => navigate('/user/gifts'), 3700); // Navega a UserGifts después de 3.7 segundos
         })
         .catch(err => {
           const response = err.response;
@@ -144,6 +154,7 @@ export default function UserGiftForm({ gift: receivedGift, closeModal }) {
     }
   };
 
+  // Función para obtener los resultados de compra desde una API externa
   const fetchShoppingResults = async (query) => {
     try {
       const response = await fetch(`http://localhost:3001/api/shopping?q=${query}`);

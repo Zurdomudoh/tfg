@@ -177,7 +177,10 @@ input:focus {
     text-decoration: none;
 }
 
-
+.imagen {
+    filter: brightness(1.1);
+    mix-blend-mode: multiply;
+}
 
 .animated {
     -webkit-animation-duration: 0.3s;
@@ -189,6 +192,21 @@ input:focus {
 .fadeInDown {
     -webkit-animation-name: fadeInDown;
     animation-name: fadeInDown;
+}
+.slick-prev:before, .slick-next:before {
+    color: black !important;
+    font-size: 27px !important;
+  }
+
+
+.slick-prev:before,
+.slick-next:before {
+  color: yellow;
+}
+
+.slick-slide > div {
+    display: flex;
+    justify-content: center;
 }
 
 @keyframes fadeInDown {

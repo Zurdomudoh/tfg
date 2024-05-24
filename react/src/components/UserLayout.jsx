@@ -3,16 +3,29 @@ import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { useStateContext } from "../context/ContextProvider";
 import axiosClient from "../axios-client.js";
 
+/**
+ * Componente para el diseño de la interfaz de usuario autenticado.
+ * 
+ * Gestiona la autenticación, la obtención de datos del usuario y la interfaz general del usuario autenticado.
+ *
+ * @returns {React.Element} El diseño de la interfaz del usuario autenticado.
+ */
 const UserLayout = () => {
   const { token, setUser, setToken, notification } = useStateContext();
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('USER'));
-  const userName = user ? user.name : ''; // Manejar el caso cuando el usuario es null
+  const user = JSON.parse(localStorage.getItem("USER"));
+  const userName = user ? user.name : ""; 
 
+  // Redirige a la página de login si no hay token de autenticación
   if (!token) {
     return <Navigate to="/login" />;
   }
 
+  /**
+   * Maneja la acción de cierre de sesión del usuario.
+   *
+   * @param {Event} ev - El evento de clic.
+   */
   const onLogout = (ev) => {
     ev.preventDefault();
 
@@ -20,10 +33,11 @@ const UserLayout = () => {
       setUser({});
       setToken(null);
       localStorage.clear();
-      navigate("/"); // Redirigir a la página principal
+      navigate("/"); 
     });
   };
 
+  // Efecto para obtener datos del usuario al montar el componente
   useEffect(() => {
     axiosClient.get("/user").then(({ data }) => {
       setUser(data);
@@ -44,8 +58,8 @@ const UserLayout = () => {
           </button>
         </div>
         <div className="flex justify-center">
-          <h1 className="text-6xl mt-4 font-semibold text-red-700 font-mountains">
-            Felices Fiestas {userName}
+          <h1 className="text-6xl mt-16 font-semibold text-red-700 font-mountains">
+            ¡Felices Fiestas! {userName} aquí tienes tu lista de regalos
           </h1>
         </div>
         <main className="flex justify-center items-center flex-grow">
