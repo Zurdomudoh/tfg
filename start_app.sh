@@ -2,13 +2,13 @@
 
 # Inicia el servidor Node.js para el backend
 echo "Iniciando servidor Node.js..."
-cd backend-server
+cd server-externo
 node server.js &
 cd ..
 
 # Inicia el servidor Laravel para el backend
 echo "Iniciando servidor Laravel..."
-cd laravel-react-starter
+cd api-laravel
 php artisan serve &
 cd ..
 
