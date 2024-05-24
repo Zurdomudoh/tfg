@@ -51,10 +51,10 @@ export default function GiftForm({ gift: initialGift, closeModal }) {
 
     request
       .then(() => {
-        console.log('Gift details saved successfully');
+        console.log('Detalles del regalo guardados');
       })
       .catch(err => {
-        console.error('Error saving gift details:', err);
+        console.error('Error guardando los detalles: ', err);
       });
   };
 
@@ -95,7 +95,7 @@ export default function GiftForm({ gift: initialGift, closeModal }) {
     if (gift.id) {
       axiosClient.put(`/gifts/${gift.id}`, formData)
         .then(() => {
-          setNotification('Regalo modificado satisfactoriamente');
+          setNotification('Regalo modificado');
           fetchAndSaveGiftDetails(gift.id, true); // Pass true to indicate an update
           closeModal();
         })
@@ -108,7 +108,7 @@ export default function GiftForm({ gift: initialGift, closeModal }) {
     } else {
       axiosClient.post('/gifts', formData)
         .then(response => {
-          setNotification('El regalo se ha creado satisfactoriamente');
+          setNotification('Se ha añadido un nuevo regalo');
           fetchAndSaveGiftDetails(response.data.gift.id, false); // Pass false to indicate a new record
           closeModal();
         })
@@ -128,7 +128,7 @@ export default function GiftForm({ gift: initialGift, closeModal }) {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error('Error fetching shopping results:', error);
+      console.error('Ha ocurrido un error: ', error);
       throw error; // Propaga el error para manejarlo más tarde
     }
   };

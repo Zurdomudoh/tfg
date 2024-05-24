@@ -35,7 +35,7 @@ export default function Users() {
 
   // Función para manejar la eliminación de un usuario
   const onDeleteClick = (userId) => {
-    if (!window.confirm("¿Quieres eliminar el usuario definitivamente?")) {
+    if (!window.confirm("¿Quieres eliminar el usuario?")) {
       return;
     }
     axiosClient

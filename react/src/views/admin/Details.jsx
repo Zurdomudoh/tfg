@@ -18,7 +18,7 @@ export default function Details({ gift, closeModal }) {
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching gift details:", error);
+        console.error("Ha ocurrido un error: ", error);
         setLoading(false);
       });
   };
