@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axiosClient from "../../axios-client.js";
 import { useStateContext } from "../../context/ContextProvider.jsx";
 import UserForm from "./UserForm";
@@ -7,31 +7,33 @@ import Modal from "react-modal";
 const ITEMS_PER_PAGE = 10;
 
 export default function Users() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const { setNotification } = useStateContext();
+  const [users, setUsers] = useState([]); // Estado para almacenar la lista de usuarios
+  const [loading, setLoading] = useState(false); // Estado para controlar el estado de carga
+  const [currentPage, setCurrentPage] = useState(1); // Estado para almacenar la página actual
+  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar la apertura/cierre del modal
+  const [selectedUser, setSelectedUser] = useState(null); // Estado para almacenar el usuario seleccionado
+  const { setNotification } = useStateContext(); // Contexto para manejar las notificaciones
 
+  // Efecto para cargar la información de los usuarios cuando se monta el componente
   useEffect(() => {
-    // Obtener la información del usuario cuando se carga el componente
-    getUserInfo();
+    getUsers();
   }, []);
 
-  const getUserInfo = () => {
-    axiosClient.get('/user')
+  // Función para obtener la lista de usuarios
+  const getUsers = () => {
+    setLoading(true);
+    axiosClient
+      .get('/users')
       .then(({ data }) => {
-        // Actualizar el contexto con la información del usuario
-        setNotification('Se han cargado los usuarios satisfactoriamente');
-        getUsers(); // Llamar a getUsers después de obtener la información del usuario
+        setLoading(false);
+        setUsers(data.users); // Actualiza el estado con la lista de usuarios
       })
-      .catch((error) => {
-        // Manejar errores aquí si es necesario
-        console.error('Error cargando la información de los usuarios: ', error);
+      .catch(() => {
+        setLoading(false);
       });
   };
 
+  // Función para manejar la eliminación de un usuario
   const onDeleteClick = (userId) => {
     if (!window.confirm("¿Quieres eliminar el usuario definitivamente?")) {
       return;
@@ -40,23 +42,10 @@ export default function Users() {
       .delete(`/users/${userId}`)
       .then(() => {
         setNotification('El usuario ha sido eliminado');
-        getUsers(); // Refrescar la lista de usuarios después de eliminar uno
+        getUsers(); // Actualiza la lista de usuarios después de eliminar uno
       })
       .catch((error) => {
         console.error('Ha ocurrido un error:', error);
-      });
-  };
-
-  const getUsers = () => {
-    setLoading(true);
-    axiosClient
-      .get('/users')
-      .then(({ data }) => {
-        setLoading(false);
-        setUsers(data.users);
-      })
-      .catch(() => {
-        setLoading(false);
       });
   };
 
@@ -64,15 +53,17 @@ export default function Users() {
   const totalPages = Math.ceil(users.length / ITEMS_PER_PAGE);
   const currentUsers = users.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
+  // Función para abrir el modal de usuario (para agregar o editar)
   const openModal = (user = null) => {
     setSelectedUser(user);
     setIsModalOpen(true);
   };
 
+  // Función para cerrar el modal
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedUser(null);
-    getUsers(); 
+    getUsers(); // Actualiza la lista de usuarios después de cerrar el modal
   };
 
   return (

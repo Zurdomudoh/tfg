@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axiosClient from "../../axios-client.js";
 import { useStateContext } from "../../context/ContextProvider.jsx";
 import Modal from "react-modal";
@@ -12,7 +12,7 @@ export default function Gifts() {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false); // Estado para controlar la apertura/cierre del modal de detalles
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [selectedGift, setSelectedGift] = useState(null);
   const { setNotification } = useStateContext();
 
@@ -20,26 +20,11 @@ export default function Gifts() {
     getGifts();
   }, []);
 
-
-  const onDeleteClick = (giftId) => {
-    if (!window.confirm("¿Quieres eliminar el regalo?")) {
-      return;
-    }
-    axiosClient
-      .delete(`/gifts/${giftId}`)
-      .then(() => {
-        setNotification('El regalo se ha eliminado');
-        getGifts(); // Refrescar la lista de regalos después de eliminar uno
-      })
-      .catch((error) => {
-        console.error('Ha ocurrido un error:', error);
-      });
-  };
-
+  // Función para obtener la lista de regalos
   const getGifts = (userId) => {
     setLoading(true);
     axiosClient
-      .get(`/gifts?userId=${userId}`) // Agregar parámetro de consulta para filtrar por usuario
+      .get(`/gifts?userId=${userId}`)
       .then(({ data }) => {
         setLoading(false);
         setGifts(data.gifts);
@@ -48,6 +33,8 @@ export default function Gifts() {
         setLoading(false);
       });
   };
+
+  // Función para obtener la etiqueta de estado
   const getStatusLabel = (status) => {
     switch (status) {
       case 0:
@@ -60,29 +47,33 @@ export default function Gifts() {
         return "Desconocido";
     }
   };
-  // Paginación
+
+  // Lógica de paginación
   const totalPages = Math.ceil(gifts.length / ITEMS_PER_PAGE);
   const currentGifts = gifts.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
+  // Función para abrir el modal de edición
   const openModal = (gift = null) => {
     setSelectedGift(gift);
     setIsModalOpen(true);
   };
 
+  // Función para cerrar el modal de edición
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedGift(null);
-    getGifts(); // Refrescar la lista de regalos después de cerrar el modal
+    getGifts(); // Actualizar la lista de regalos después de cerrar el modal
   };
 
+  // Función para abrir el modal de detalles
   const openDetailsModal = (gift = null) => {
     setSelectedGift(gift);
-    setIsDetailsModalOpen(true); // Establecer el estado del modal de detalles como abierto
+    setIsDetailsModalOpen(true);
   };
-  
+
   // Función para cerrar el modal de detalles
   const closeDetailsModal = () => {
-    setIsDetailsModalOpen(false); // Establecer el estado del modal de detalles como cerrado
+    setIsDetailsModalOpen(false);
   };
 
   return (
