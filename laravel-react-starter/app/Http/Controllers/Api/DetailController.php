@@ -8,6 +8,15 @@ use Illuminate\Http\Request;
 
 class DetailController extends Controller
 {
+    public function index()
+    {
+        // Obtener todos los detalles
+        $details = Detail::all();
+
+        // Devolver los detalles como JSON
+        return response()->json($details, 200);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

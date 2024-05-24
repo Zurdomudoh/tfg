@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/gifts', GiftController::class);
 
     // Rutas para los detalles de los regalos
+    Route::get('/details', [DetailController::class, 'index']); // Ruta para obtener todos los detalles
     Route::post('/details', [DetailController::class, 'store']);
     Route::put('/details/{id}', [DetailController::class, 'update']); // Ruta para actualizar detalles
   
