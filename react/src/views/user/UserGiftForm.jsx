@@ -33,7 +33,7 @@ export default function UserGiftForm({ gift: receivedGift, closeModal }) {
     if (user && user.id) {
       setGift(prevGift => ({ ...prevGift, user_id: user.id }));
     } else {
-      console.error('No user found in localStorage');
+      console.error('No existe ese usuario en el localStorage');
     }
 
     setLoading(true);
@@ -81,10 +81,10 @@ export default function UserGiftForm({ gift: receivedGift, closeModal }) {
 
     request
       .then(() => {
-        console.log('Gift details saved successfully');
+        console.log('Regalo guardado');
       })
       .catch(err => {
-        console.error('Error saving gift details:', err);
+        console.error('Ha ocurrido un error', err);
       });
   };
 
@@ -94,7 +94,6 @@ export default function UserGiftForm({ gift: receivedGift, closeModal }) {
     fetchShoppingResults(query)
       .then(shoppingData => {
         const result = shoppingData.shopping_results[0];
-        console.log('Shopping data:', result);
         saveGiftDetails({
           id: giftId, // Este ID debe coincidir con el ID del detalle si se está actualizando
           gift_id: giftId,
@@ -107,7 +106,7 @@ export default function UserGiftForm({ gift: receivedGift, closeModal }) {
         setTimeout(closeModal, 3700); // Espera 3.7 segundos antes de cerrar el modal
       })
       .catch(error => {
-        console.error('Error fetching shopping data:', error);
+        console.error('Ha ocurrido un error', error);
       });
   };
 
@@ -125,7 +124,7 @@ export default function UserGiftForm({ gift: receivedGift, closeModal }) {
       // Si es una edición, hacemos una solicitud PUT
       axiosClient.put(`/gifts/${gift.id}`, formData)
         .then(() => {
-          setNotification('Gift was successfully updated');
+          setNotification('Regalo modificado');
           fetchAndSaveGiftDetails(gift.id, true); // Pasar true para indicar una actualización
           closeModal(); // Cerrar el modal después de guardar
           setTimeout(() => navigate('/user/gifts'), 3700); // Navega a UserGifts después de 3.7 segundos
@@ -140,7 +139,7 @@ export default function UserGiftForm({ gift: receivedGift, closeModal }) {
       // Si es un nuevo regalo, hacemos una solicitud POST
       axiosClient.post("/gifts", formData)
         .then(response => {
-          setNotification('Gift was successfully created');
+          setNotification('Nuevo regalo añadido');
           fetchAndSaveGiftDetails(response.data.gift.id, false); // Pasar false para indicar un nuevo registro
           closeModal(); // Cerrar el modal después de guardar
           setTimeout(() => navigate('/user/gifts'), 3700); // Navega a UserGifts después de 3.7 segundos
