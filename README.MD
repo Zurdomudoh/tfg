@@ -1,13 +1,21 @@
 Instalación
 
 • Requisitos mínimos del sistema:
-		-Composer - https://getcomposer.org/download/
-		-Node.js - https://nodejs.org/en/download/package-manager  
-	  -Xammp - https://www.apachefriends.org/es/download.html 
-		-Git (opcional) - https://git-scm.com/downloads
 
-• El primer paso, y más obvio es descargarse el proyecto de mi repositorio de Github.com, bien con el comando “git clone” o descargando el repositorio en .Zip
-			https://github.com/Zurdomudoh/tfg.git
+-Composer - https://getcomposer.org/download/
+
+-Node.js - https://nodejs.org/en/download/package-manager  
+
+-Xammp - https://www.apachefriends.org/es/download.html 
+
+-Git (opcional) - https://git-scm.com/downloads
+
+
+
+• El primer paso, y más obvio es descargarse el proyecto de mi repositorio de Github.com, 
+bien con el comando “git clone” o descargando el repositorio en .Zip
+			
+                https://github.com/Zurdomudoh/tfg.git
 
 
 • Laravel:
